@@ -1,18 +1,247 @@
+# this is an example of the Uber API
+# as a demonstration of an API spec in YAML
 swagger: '2.0'
 info:
+  title: Project Management API
+  description: Control projects...
   version: "1.0.0"
+# array of all schemes that your API supports
+schemes:
+  - http
+# will be prefixed to all paths
+basePath: /v1
+produces:
+  - application/json
 paths:
-  /hello:
-    get:
+  /project:
+    post:
+      tags:
+      - project
+      description: Register a new project in the application
+      parameters:
+      - name: create
+        required: true
+        in: body
+        schema:
+          $ref: "#/definitions/Project"
       responses:
         200:
+          description: The user signup process was created
           schema:
-            $ref: "#/definitions/HelloResponse"
+            $ref: "#/definitions/MessageResponse"
+        400:
+          description: Could not register the user with the provided information.
+          schema:
+            $ref: "#/definitions/MessageResponse"
+  /project/{id}:
+    parameters:
+    - name: id
+      type: string
+      in: path
+      required: true
+    get:
+      tags:
+      - project
+      description: Get a project status
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/ProjectStatusResponse"
+        404:
+          description: Not found
+          schema:
+            $ref: "#/definitions/MessageResponse"
+
+    delete:
+      tags:
+      - project
+      description: Register a new project in the application
+      responses:
+        200:
+          description: The user signup process was created
+          schema:
+            $ref: "#/definitions/MessageResponse"
+        400:
+          description: Could not register the user with the provided information.
+          schema:
+            $ref: "#/definitions/MessageResponse"
+    put:
+      tags:
+      - project
+      description: Update a project
+      parameters:
+      - name: create
+        required: true
+        in: body
+        schema:
+          $ref: "#/definitions/Project"
+      responses:
+        200:
+          description: The user signup process was created
+          schema:
+            $ref: "#/definitions/MessageResponse"
+        400:
+          description: Could not register the user with the provided information.
+          schema:
+            $ref: "#/definitions/MessageResponse"
+  /task:
+    post:
+      tags:
+      - task
+      description: Register a new task in the application
+      parameters:
+      - name: create
+        required: true
+        in: body
+        schema:
+          $ref: "#/definitions/Task"
+      responses:
+        200:
+          description: The user task was created
+          schema:
+            $ref: "#/definitions/MessageResponse"
+        400:
+          description: Could not register the user with the provided information.
+          schema:
+            $ref: "#/definitions/MessageResponse"
+  /task/{id}:
+    parameters:
+    - name: id
+      type: string
+      in: path
+      required: true
+    delete:
+      tags:
+      - task
+      description: Register a new project in the application
+      responses:
+        200:
+          description: The user signup process was created
+          schema:
+            $ref: "#/definitions/MessageResponse"
+        404:
+          description: Task not found.
+          schema:
+            $ref: "#/definitions/MessageResponse"
+    put:
+      tags:
+      - task
+      description: Update a task
+      parameters:
+      - name: create
+        required: true
+        in: body
+        schema:
+          $ref: "#/definitions/Task"
+      responses:
+        200:
+          description: The user signup process was created
+          schema:
+            $ref: "#/definitions/MessageResponse"
+        400:
+          description: Could not register the user with the provided information.
+          schema:
+            $ref: "#/definitions/MessageResponse"
+  /task/{id}/status/{status}:
+    parameters:
+    - name: id
+      type: string
+      in: path
+      required: true
+    - name: status
+      type: string
+      in: path
+      required: true
+
+    put:
+      tags:
+      - task
+      description: Update a task
+      responses:
+        200:
+          description: The task was updated
+          schema:
+            $ref: "#/definitions/MessageResponse"
+        404:
+          description: Task not found.
+          schema:
+            $ref: "#/definitions/MessageResponse"
+  /task/{id}/user/{user}:
+    parameters:
+    - name: id
+      type: string
+      in: path
+      required: true
+    - name: user
+      type: string
+      in: path
+      required: true
+    put:
+      tags:
+      - task
+      description: Assign task to a user
+      responses:
+        200:
+          description: The task was updated
+          schema:
+            $ref: "#/definitions/MessageResponse"
+        404:
+          description: Task not found.
+          schema:
+            $ref: "#/definitions/MessageResponse"
 definitions:
-  HelloResponse:
+  Project:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Project id.
+        require: true
+      name:
+        type: string
+        description: Project name.
+      leader:
+        type: string
+        description: Project Leader name.
+      start:
+        type: string
+        description: Start
+      finish:
+        type: string
+        description: Finish
+      task:
+        type: array
+        description: Project tasks.
+        items:
+          $ref: "#/definitions/Task"
+  Task:
+    type: object
+    properties:
+      name:
+        type: string
+        description: Task name
+      user:
+        type: string
+        description: Assignee user
+      status:
+        type: string
+        description: Task status (OPEN|CLOSE)
+  ProjectStatusResponse:
+    type: object
+    properties:
+      status:
+        type: integer
+        description: Advance
+  MessageResponse:
     type: object
     required:
-    - hello
+    - code
+    - msg
     properties:
-      hello:
+      code:
         type: string
+        description: Error code
+      msg:
+        type: string
+        description: Localized message describing the error
